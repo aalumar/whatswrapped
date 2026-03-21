@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Cache and generated files
+cache/
+static/images/
+
+# Personal data and config
+chats/
+config.json
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+.claude/
+.cursor/
+CLAUDE.md

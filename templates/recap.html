@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ chat_name }} — WhatsWrapped 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:        #09090b;
+            --surface:   #18181b;
+            --surface-2: #27272a;
+            --border:    rgba(255,255,255,0.07);
+            --border-hi: rgba(255,255,255,0.14);
+            --text:      #fafafa;
+            --muted:     #71717a;
+            --dim:       #52525b;
+            --green:     #4ade80;
+            --purple:    #a78bfa;
+            --pink:      #fb7185;
+            --amber:     #fbbf24;
+            --cyan:      #22d3ee;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ── Progress bar ─────────────────────────────────────── */
+        #progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--green), var(--purple), var(--pink));
+            z-index: 1000;
+            transition: width 0.08s linear;
+        }
+
+        /* ── Back button ──────────────────────────────────────── */
+        .back-btn {
+            position: fixed;
+            top: 20px; left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(24,24,27,0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 9px 18px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            z-index: 100;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .back-btn:hover {
+            background: rgba(39,39,42,0.9);
+            border-color: var(--border-hi);
+        }
+
+        /* ── Sections ─────────────────────────────────────────── */
+        .section {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ── Hero ─────────────────────────────────────────────── */
+        .section--hero {
+            height: 100vh;
+            min-height: 600px;
+            background: var(--bg);
+            background-image: url("{{ url_for('static', filename='images/background_2025.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            padding: 80px 24px;
+        }
+        .section--hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(9,9,11,0.25) 0%,
+                rgba(9,9,11,0.65) 55%,
+                rgba(9,9,11,1)    100%
+            );
+            z-index: 0;
+        }
+        .section--hero > * { position: relative; z-index: 1; }
+
+        /* ── Reveal animation ─────────────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition:
+                opacity  0.7s cubic-bezier(0.16,1,0.3,1),
+                transform 0.7s cubic-bezier(0.16,1,0.3,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-d1 { transition-delay: 0.08s; }
+        .reveal-d2 { transition-delay: 0.16s; }
+        .reveal-d3 { transition-delay: 0.24s; }
+        .reveal-d4 { transition-delay: 0.32s; }
+        .reveal-d5 { transition-delay: 0.40s; }
+        .reveal-d6 { transition-delay: 0.48s; }
+
+        /* Hero content */
+        .hero-eyebrow {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 22px;
+            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+        }
+        .hero-title {
+            font-size: clamp(3.2rem, 9vw, 6.5rem);
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            line-height: 1.0;
+            margin-bottom: 18px;
+            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+        }
+        .hero-chat-name {
+            font-size: clamp(1.2rem, 3.5vw, 1.9rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, var(--green), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+        }
+        .scroll-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.35);
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s both, bob 2.8s ease-in-out 1.5s infinite;
+        }
+        .scroll-arrow { font-size: 1.1rem; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bob {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(8px); }
+        }
+
+        /* ── Chapter label ────────────────────────────────────── */
+        .chapter {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--dim);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chapter::after {
+            content: '';
+            display: inline-block;
+            width: 28px;
+            height: 1px;
+            background: var(--border-hi);
+        }
+        .chapter.c-green  { color: var(--green); }
+        .chapter.c-purple { color: var(--purple); }
+        .chapter.c-pink   { color: var(--pink); }
+        .chapter.c-amber  { color: var(--amber); }
+        .chapter.c-cyan   { color: var(--cyan); }
+
+        /* ── Section heading ──────────────────────────────────── */
+        .section-heading {
+            font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+            font-weight: 800;
+            letter-spacing: -0.045em;
+            line-height: 1.08;
+            text-align: center;
+            margin-bottom: 52px;
+        }
+
+        /* ── Total messages ───────────────────────────────────── */
+        .section--messages {
+            background: radial-gradient(ellipse at center, rgba(167,139,250,0.055) 0%, var(--bg) 70%);
+            text-align: center;
+        }
+        .messages-label-top {
+            font-size: 1.05rem;
+            color: var(--muted);
+            font-weight: 500;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+        .mega-number {
+            font-size: clamp(5.5rem, 18vw, 14rem);
+            font-weight: 800;
+            letter-spacing: -0.06em;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--green) 0%, var(--purple) 55%, var(--pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 14px;
+            padding-right: 0.06em;
+        }
+        .messages-label-bottom {
+            font-size: 1.05rem;
+            color: var(--muted);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+        }
+
+        /* ── Stat cards ───────────────────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            max-width: 740px;
+            width: 100%;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 30px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.25s;
+        }
+        .stat-card:hover {
+            border-color: var(--border-hi);
+            transform: translateY(-3px);
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+        }
+        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--green),  transparent); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--purple), transparent); }
+        .stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--pink),   transparent); }
+        .stat-card:nth-child(4)::before { background: linear-gradient(90deg, var(--amber),  transparent); }
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        /* ── Chart container ──────────────────────────────────── */
+        .chart-wrap {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            overflow: hidden;
+        }
+        .chart-wrap iframe {
+            width: 100%;
+            height: 480px;
+            border: none;
+            display: block;
+        }
+
+        /* ── Emoji grid ───────────────────────────────────────── */
+        .emoji-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            max-width: 820px;
+        }
+        .emoji-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px 18px;
+            min-width: 88px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .emoji-card:hover {
+            transform: scale(1.1) rotate(-2deg);
+            border-color: var(--border-hi);
+        }
+        .emoji-symbol { font-size: 3rem; line-height: 1; }
+        .emoji-count {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--dim);
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Sticker gallery ──────────────────────────────────── */
+        .sticker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 14px;
+            max-width: 920px;
+            width: 100%;
+        }
+        .sticker-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px 14px 14px;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .sticker-card:hover {
+            transform: scale(1.06);
+            border-color: var(--border-hi);
+        }
+        .sticker-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .sticker-count {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--dim);
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Leaderboard ─────────────────────────────────────── */
+        .leaderboard {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+        .lb-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+        }
+        .lb-rank {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: var(--dim);
+            padding-top: 3px;
+            min-width: 24px;
+            flex-shrink: 0;
+        }
+        .lb-rank.r1 { color: var(--green); }
+        .lb-rank.r2 { color: var(--purple); }
+        .lb-rank.r3 { color: var(--pink); }
+        .lb-content { flex: 1; min-width: 0; }
+        .lb-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .lb-name {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .lb-row.r1-row .lb-name { font-size: 1.15rem; }
+        .lb-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .lb-bar-track {
+            height: 5px;
+            background: var(--surface-2);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+        .lb-bar {
+            height: 100%;
+            border-radius: 100px;
+            width: 0%;
+            transition: width 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .lb-row.r1-row .lb-bar-track { height: 7px; }
+        .bar-1    { background: linear-gradient(90deg, var(--green), var(--purple)); }
+        .bar-2    { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+        .bar-3    { background: var(--pink); }
+        .bar-rest { background: var(--dim); opacity: 0.6; }
+
+        @media (max-width: 480px) {
+            .lb-name { font-size: 0.9rem; }
+            .lb-row.r1-row .lb-name { font-size: 1rem; }
+            .lb-meta { font-size: 0.7rem; }
+        }
+
+        /* ── Timeline ────────────────────────────────────────── */
+        .timeline-wrap {
+            width: 100%;
+            max-width: 960px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 28px 20px 14px;
+            overflow: hidden;
+        }
+
+        /* ── Heatmap ──────────────────────────────────────────── */
+        .heatmap-wrap {
+            width: 100%;
+            max-width: 900px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 24px 20px 20px;
+            overflow: hidden;
+        }
+        .hm-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-bottom: 2px;
+        }
+        .hm-row.hm-header { margin-bottom: 6px; }
+        .hm-corner   { width: 36px; flex-shrink: 0; }
+        .hm-day-label {
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            width: 36px;
+            flex-shrink: 0;
+            text-align: right;
+            padding-right: 8px;
+            user-select: none;
+        }
+        .hm-hour-label {
+            flex: 1;
+            font-size: 0.58rem;
+            color: var(--dim);
+            text-align: center;
+            user-select: none;
+        }
+        .hm-cell {
+            flex: 1;
+            height: 22px;
+            border-radius: 3px;
+            transition: transform 0.12s;
+            cursor: default;
+        }
+        .hm-cell:hover { transform: scale(1.5); position: relative; z-index: 1; }
+
+        @media (max-width: 768px) {
+            .hm-cell { height: 16px; }
+            .hm-day-label { font-size: 0.56rem; width: 28px; padding-right: 5px; }
+            .hm-corner { width: 28px; }
+        }
+        @media (max-width: 480px) {
+            .hm-cell { height: 12px; border-radius: 2px; }
+            .hm-day-label { width: 22px; font-size: 0.5rem; padding-right: 3px; }
+            .hm-corner { width: 22px; }
+        }
+
+        /* ── Wordcloud ────────────────────────────────────────── */
+        .wordcloud-wrap {
+            max-width: 820px;
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            overflow: hidden;
+        }
+        .wordcloud-wrap img { width: 100%; height: auto; display: block; }
+
+        /* ── Word cloud ──────────────────────────────────────── */
+        .wc-wrap {
+            width: 100%;
+            max-width: 880px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 44px 36px;
+        }
+        .wc-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            justify-content: center;
+            align-items: center;
+        }
+        .wc-word {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            cursor: default;
+            display: inline-block;
+            opacity: 0;
+            transform: scale(0.65);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1), filter 0.15s;
+        }
+        .wc-word:hover {
+            filter: brightness(1.4) drop-shadow(0 0 10px currentColor);
+            opacity: 1 !important;
+            transform: scale(1.15) !important;
+        }
+        @media (max-width: 480px) {
+            .wc-wrap { padding: 28px 20px; }
+            .wc-flex { gap: 6px 10px; }
+        }
+
+        /* ── Fun facts ────────────────────────────────────────── */
+        .facts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 740px;
+            width: 100%;
+        }
+        .fact-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px 32px;
+            display: flex;
+            gap: 22px;
+            align-items: flex-start;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .fact-card:hover {
+            border-color: var(--border-hi);
+            transform: translateX(5px);
+        }
+        .fact-num {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--green);
+            padding-top: 5px;
+            min-width: 26px;
+            flex-shrink: 0;
+        }
+        .fact-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            line-height: 1.65;
+        }
+
+        /* ── Longest message quote ────────────────────────────── */
+        .longest-msg-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--amber);
+            border-radius: 20px;
+            padding: 28px 32px;
+            max-width: 740px;
+            width: 100%;
+            margin-top: 12px;
+        }
+        .longest-msg-meta {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--amber);
+            margin-bottom: 14px;
+        }
+        .longest-msg-text {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.7;
+            color: var(--fg);
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        /* ── End card ─────────────────────────────────────────── */
+        .section--end {
+            background: radial-gradient(ellipse at center, rgba(74,222,128,0.055) 0%, var(--bg) 70%);
+            text-align: center;
+            min-height: 80vh;
+        }
+        .end-year {
+            font-size: clamp(5rem, 18vw, 13rem);
+            font-weight: 800;
+            letter-spacing: -0.06em;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--green), var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            padding-right: 0.06em;
+        }
+        .end-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 10px;
+        }
+        .end-sub {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-bottom: 44px;
+        }
+        .end-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 14px 28px;
+            background: var(--surface);
+            border: 1px solid var(--border-hi);
+            border-radius: 100px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+        .end-btn:hover {
+            background: var(--surface-2);
+            border-color: rgba(255,255,255,0.22);
+            transform: translateY(-2px);
+        }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .section { padding: 80px 18px 64px; }
+            .section--hero { padding: 80px 18px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; max-width: 500px; }
+            .stat-card { padding: 22px 18px; }
+            .stat-value { font-size: 2.3rem; }
+            .chart-wrap iframe { height: 360px; }
+            .sticker-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+            .emoji-card { min-width: 72px; padding: 18px 14px; }
+            .emoji-symbol { font-size: 2.4rem; }
+            .fact-card { padding: 22px 20px; }
+            .back-btn { top: 12px; left: 12px; padding: 8px 14px; font-size: 0.78rem; }
+            .section-heading { margin-bottom: 36px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-value { font-size: 1.9rem; }
+            .stat-card { padding: 18px 14px; border-radius: 16px; }
+            .chart-wrap iframe { height: 300px; }
+            .emoji-card { min-width: 62px; padding: 14px 10px; }
+            .emoji-symbol { font-size: 2rem; }
+            .fact-card { gap: 14px; padding: 18px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="progress-bar"></div>
+    <a href="/chats" class="back-btn">← Chats</a>
+
+    <!-- ═══════════════════════════════════════ HERO -->
+    <div class="section section--hero">
+        <p class="hero-eyebrow">WhatsWrapped &nbsp;·&nbsp; 2025</p>
+        <h1 class="hero-title">our year<br>in texts.</h1>
+        <div class="hero-chat-name">{{ chat_name }}</div>
+        <div class="scroll-hint">
+            <span>Scroll to see فضايح</span>
+            <span class="scroll-arrow">↓</span>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ TOTAL MESSAGES -->
+    <div class="section section--messages">
+        <p class="chapter c-green reveal">01 — The Total</p>
+        <div class="messages-label-top reveal reveal-d1">we all sent</div>
+        <div class="mega-number reveal reveal-d2"
+             id="msg-counter"
+             data-target="{{ stats.total_messages }}">{{ stats.total_messages }}</div>
+        <div class="messages-label-bottom reveal reveal-d3">messages in 2025</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ STATS GRID -->
+    <div class="section">
+        <p class="chapter c-purple reveal">02 — The Stats</p>
+        <!-- <h2 class="section-heading reveal reveal-d1">The numbers<br>don't lie.</h2> -->
+        <div class="stats-grid">
+            <div class="stat-card reveal reveal-d2">
+                <div class="stat-value">{{ stats.longest_streak }}</div>
+                <div class="stat-label">Day streak</div>
+            </div>
+            <div class="stat-card reveal reveal-d3">
+                <div class="stat-value">{{ stats.most_active_day }}</div>
+                <div class="stat-label">Most active day of the year</div>
+            </div>
+            <div class="stat-card reveal reveal-d4">
+                <div class="stat-value">
+                    {% if stats.most_active_hour_numeric is defined %}
+                        {% set hour = stats.most_active_hour_numeric %}
+                    {% else %}
+                        {% set hour = stats.most_active_hour.split(':')[0] | int %}
+                    {% endif %}
+                    {% if hour == 0 %}12am
+                    {% elif hour < 12 %}{{ hour }}am
+                    {% elif hour == 12 %}12pm
+                    {% else %}{{ hour - 12 }}pm
+                    {% endif %}
+                </div>
+                <div class="stat-label">Peak degeneracy hour</div>
+            </div>
+            <div class="stat-card reveal reveal-d5">
+                <div class="stat-value">{{ stats.media_percentage }}%</div>
+                <div class="stat-label">Of messages are media</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ TOP SENDERS -->
+    {% if stats.top_senders %}
+    <div class="section">
+        <p class="chapter c-pink reveal">03 — Top Senders</p>
+        <h2 class="section-heading reveal reveal-d1">لا شغل<br>ولا مشغلة</h2>
+        <div class="leaderboard">
+            {% set sender_max = stats.top_senders[0][1] %}
+            {% for sender in stats.top_senders %}
+                {% set bar_pct = (sender[1] / sender_max * 100) | round(1) %}
+                {% set msg_pct = (sender[1] / stats.senders_total * 100) | round(1) %}
+                {% set rank_class = 'r' ~ loop.index if loop.index <= 3 else '' %}
+                {% set bar_class = 'bar-' ~ loop.index if loop.index <= 3 else 'bar-rest' %}
+                <div class="lb-row {{ 'r1-row' if loop.index == 1 }} {{ rank_class }} reveal reveal-d{{ loop.index if loop.index <= 6 else 6 }}"
+                     data-bar-width="{{ bar_pct }}">
+                    <div class="lb-rank {{ rank_class }}">{{ '%02d' % loop.index }}</div>
+                    <div class="lb-content">
+                        <div class="lb-header">
+                            <span class="lb-name">{{ sender[0] }}</span>
+                            <span class="lb-meta">{{ '{:,}'.format(sender[1]) }} &nbsp;·&nbsp; {{ msg_pct }}%</span>
+                        </div>
+                        <div class="lb-bar-track">
+                            <div class="lb-bar {{ bar_class }}"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════ TOP EMOJIS -->
+    {% if stats.top_emojis %}
+    <div class="section">
+        <p class="chapter c-amber reveal">04 — Emojis </p>
+        <h2 class="section-heading reveal reveal-d1">للي ما يعرفون<br>يعبرون</h2>
+        <div class="emoji-grid">
+            {% for emoji, count in stats.top_emojis.items() %}
+            <div class="emoji-card reveal reveal-d{{ loop.index if loop.index <= 6 else 6 }}">
+                <div class="emoji-symbol">{{ emoji }}</div>
+                <div class="emoji-count">×{{ count }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════ TOP STICKERS -->
+    {% if stats.top_sticker_files %}
+    <div class="section">
+        <p class="chapter c-cyan reveal">05 — Stickers</p>
+        <h2 class="section-heading reveal reveal-d1">shiii ion een know</h2>
+        <div class="sticker-grid">
+            {% for sticker in stats.top_sticker_files[:10] %}
+            <div class="sticker-card reveal reveal-d{{ loop.index if loop.index <= 6 else 6 }}">
+                {% if sticker.thumbnail %}
+                <img src="{{ url_for('static', filename=sticker.thumbnail) }}" alt="{{ sticker.filename }}">
+                {% else %}
+                <div style="width:80px;height:80px;background:var(--surface-2);border-radius:10px;margin:0 auto 10px;"></div>
+                {% endif %}
+                {% if stats.top_stickers and sticker.filename in stats.top_stickers %}
+                <div class="sticker-count">×{{ stats.top_stickers[sticker.filename] }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════ ACTIVITY TIMELINE -->
+    {% if stats.activity_timeline %}
+    <div class="section">
+        <p class="chapter c-green reveal">06 — Timeline</p>
+        <h2 class="section-heading reveal reveal-d1">مدري وش فايدة ذا</h2>
+        <div class="timeline-wrap reveal reveal-d2">
+            <div id="timeline-svg-host"></div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════ WORD CLOUD -->
+    {% if stats.word_frequency %}
+    <div class="section">
+        <p class="chapter c-purple reveal">07 — Vocab</p>
+        <h2 class="section-heading reveal reveal-d1">شعراء<br>ومتحدثين</h2>
+        <div class="wc-wrap reveal reveal-d2">
+            <div class="wc-flex" id="wc-flex"></div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════ ACTIVITY HEATMAP -->
+    {% if stats.activity_heatmap %}
+    <div class="section">
+        <p class="chapter c-pink reveal">08 — Heatmap</p>
+        <h2 class="section-heading reveal reveal-d1"><br></h2>
+        <div class="heatmap-wrap reveal reveal-d2">
+            <div id="heatmap-grid"></div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════ FUN FACTS -->
+    {% if stats.fun_facts %}
+    <div class="section">
+        <p class="chapter c-amber reveal">09 — Did You Know</p>
+        <!-- <h2 class="section-heading reveal reveal-d1">Things you didn't<br>know you needed.</h2> -->
+        <div class="facts-list">
+            {% for fact in stats.fun_facts %}
+            <div class="fact-card reveal reveal-d{{ loop.index if loop.index <= 6 else 6 }}">
+                <div class="fact-num">{{ '%02d' % loop.index }}</div>
+                <div class="fact-text">{{ fact }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if stats.longest_message and stats.longest_message.length > 0 %}
+        <div class="longest-msg-card reveal reveal-d6">
+            <div class="longest-msg-meta">Longest message — {{ stats.longest_message.length }} chars by {{ stats.longest_message.sender }}</div>
+            <div class="longest-msg-text">{{ stats.longest_message.content }}</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════ END CARD -->
+    <div class="section section--end">
+        <div class="end-year reveal">2025</div>
+        <p class="end-sub reveal reveal-d2">See you next year, {{ chat_name }}.</p>
+        <a href="/chats" class="end-btn reveal reveal-d3">← Back to all chats</a>
+    </div>
+
+    <script>
+        // ── Progress bar
+        const bar = document.getElementById('progress-bar');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const total = document.documentElement.scrollHeight - window.innerHeight;
+            bar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+        }, { passive: true });
+
+        // ── Word cloud
+        (function initWordCloud() {
+            const flex = document.getElementById('wc-flex');
+            if (!flex) return;
+
+            const words   = {{ stats.word_frequency | tojson }};
+            const entries = Object.entries(words);
+            // tojson may sort keys alphabetically, so compute max/min from values
+            const counts  = entries.map(e => e[1]);
+            const maxCount = Math.max(...counts, 1);
+            const minCount = Math.min(...counts, maxCount);
+            const range    = maxCount - minCount || 1;
+
+            const palette   = ['#4ade80','#a78bfa','#fb7185','#fbbf24','#22d3ee','#818cf8','#34d399','#f472b6'];
+            const rotations = [0, 0, -3, 3, -5, 5, -2, 2, 0, 4, -4, 1, -1, 3, -3];
+
+            // Sort descending by count so largest words come first
+            entries.sort((a, b) => b[1] - a[1]);
+
+            entries.forEach(([word, count], i) => {
+                const t        = (count - minCount) / range;
+                const fontSize = (0.85 + t * 2.5).toFixed(2);
+                const opacity  = (0.45 + t * 0.55).toFixed(2);
+                const color    = palette[i % palette.length];
+                const rot      = rotations[i % rotations.length];
+
+                const span = document.createElement('span');
+                span.className = 'wc-word';
+                span.textContent = word;
+                span.style.fontSize = fontSize + 'rem';
+                span.style.color    = color;
+                span.style.transitionDelay = (i * 20) + 'ms';
+                // Store target values for reveal
+                span.dataset.opacity = opacity;
+                span.dataset.rot     = rot;
+                flex.appendChild(span);
+            });
+
+            // Reveal: transition each word to its final opacity + rotation
+            const section = flex.closest('.section');
+            if (section) {
+                new IntersectionObserver(obs => {
+                    if (obs[0].isIntersecting) {
+                        flex.querySelectorAll('.wc-word').forEach(w => {
+                            w.style.opacity   = w.dataset.opacity;
+                            w.style.transform = `scale(1) rotate(${w.dataset.rot}deg)`;
+                        });
+                    }
+                }, { threshold: 0.1 }).observe(section);
+            }
+        })();
+
+        // ── Scroll reveal + leaderboard bar animation
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    // Animate leaderboard bars
+                    const bar = e.target.querySelector('.lb-bar');
+                    if (bar && e.target.dataset.barWidth) {
+                        setTimeout(() => { bar.style.width = e.target.dataset.barWidth + '%'; }, 200);
+                    }
+                    revealObserver.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // ── Timeline SVG
+        (function initTimeline() {
+            const host = document.getElementById('timeline-svg-host');
+            if (!host) return;
+
+            const raw = {{ stats.activity_timeline | tojson }};
+            const start = new Date('2025-01-01');
+            const counts = [];
+            for (let i = 0; i < 365; i++) {
+                const d = new Date(start);
+                d.setDate(d.getDate() + i);
+                counts.push(raw[d.toISOString().split('T')[0]] || 0);
+            }
+            const maxCount = Math.max(...counts, 1);
+            const isMobile = window.innerWidth < 600;
+
+            const W = 1000, H = 260;
+            const pl = 6, pr = 6, pt = 10, pb = isMobile ? 52 : 42;
+            const pw = W - pl - pr, ph = H - pt - pb;
+            const xOf = i => pl + (i / (counts.length - 1)) * pw;
+            const yOf = v => pt + ph - (v / maxCount) * ph;
+
+            // Smooth bezier path
+            let linePath = `M${xOf(0)},${yOf(counts[0])}`;
+            for (let i = 1; i < counts.length; i++) {
+                const cx = (xOf(i - 1) + xOf(i)) / 2;
+                linePath += ` C${cx},${yOf(counts[i-1])} ${cx},${yOf(counts[i])} ${xOf(i)},${yOf(counts[i])}`;
+            }
+            const fillPath = `${linePath} L${xOf(364)},${pt+ph} L${pl},${pt+ph}Z`;
+
+            // Subtle grid
+            const grid = [0,1,2,3,4].map(i => {
+                const y = pt + (ph / 4) * i;
+                return `<line x1="${pl}" y1="${y}" x2="${pl+pw}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`;
+            }).join('');
+
+            // Month labels — fewer on narrow screens to avoid crowding
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const labelStep = isMobile ? 3 : 1; // quarterly on mobile, monthly otherwise
+            const labelFontSize = isMobile ? 28 : 18;
+            const mLabels = months.map((m, mi) => {
+                if (mi % labelStep !== 0) return '';
+                const dayIdx = Math.round((new Date(2025, mi, 1) - start) / 86400000);
+                if (dayIdx >= 365) return '';
+                const x = xOf(dayIdx);
+                return `<text x="${x}" y="${H - 5}" fill="rgba(113,113,122,0.85)" font-size="${labelFontSize}" font-family="Space Grotesk,system-ui" font-weight="500" text-anchor="middle">${m}</text>
+                        <line x1="${x}" y1="${pt+ph}" x2="${x}" y2="${pt+ph+4}" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>`;
+            }).join('');
+
+            host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;display:block">
+                <defs>
+                    <linearGradient id="tlGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#4ade80" stop-opacity="0.22"/>
+                        <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                ${grid}
+                ${mLabels}
+                <path d="${fillPath}" fill="url(#tlGrad)" id="tl-fill" style="opacity:0;transition:opacity 0.8s ease 0.5s"/>
+                <path d="${linePath}" fill="none" stroke="#4ade80" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round" id="tl-line"/>
+            </svg>`;
+
+            // Prep stroke animation
+            const line = document.getElementById('tl-line');
+            if (line) {
+                const len = line.getTotalLength();
+                line.style.strokeDasharray = len;
+                line.style.strokeDashoffset = len;
+                line.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.16,1,0.3,1)';
+            }
+
+            // Fire when section enters viewport
+            const section = host.closest('.section');
+            if (section) {
+                new IntersectionObserver(entries => {
+                    if (entries[0].isIntersecting) {
+                        const l = document.getElementById('tl-line');
+                        const f = document.getElementById('tl-fill');
+                        if (l) l.style.strokeDashoffset = 0;
+                        if (f) f.style.opacity = 1;
+                    }
+                }, { threshold: 0.2 }).observe(section);
+            }
+        })();
+
+        // ── Heatmap grid
+        (function initHeatmap() {
+            const container = document.getElementById('heatmap-grid');
+            if (!container) return;
+
+            const data  = {{ stats.activity_heatmap | tojson }};
+            const FULL  = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+            const SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+            let maxVal = 1;
+            FULL.forEach(d => (data[d] || []).forEach(v => { if (v > maxVal) maxVal = v; }));
+
+            // Hour header row
+            let html = '<div class="hm-row hm-header"><div class="hm-corner"></div>';
+            for (let h = 0; h < 24; h++) {
+                let label = '';
+                if      (h === 0)  label = '12a';
+                else if (h === 6)  label = '6a';
+                else if (h === 12) label = '12p';
+                else if (h === 18) label = '6p';
+                html += `<div class="hm-hour-label">${label}</div>`;
+            }
+            html += '</div>';
+
+            // Day rows
+            FULL.forEach((day, di) => {
+                const hours = data[day] || Array(24).fill(0);
+                html += `<div class="hm-row"><div class="hm-day-label">${SHORT[di]}</div>`;
+                hours.forEach(count => {
+                    const alpha = count === 0 ? 0.04 : 0.1 + (count / maxVal) * 0.8;
+                    html += `<div class="hm-cell" style="background:rgba(74,222,128,${alpha.toFixed(2)})"></div>`;
+                });
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        })();
+
+        // ── Number counter for total messages
+        const counter = document.getElementById('msg-counter');
+        if (counter) {
+            const target = parseInt(counter.dataset.target, 10);
+            let started = false;
+
+            function easeOutExpo(t) {
+                return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+            }
+            function runCount() {
+                if (started) return;
+                started = true;
+                const duration = 1800;
+                const startTime = performance.now();
+                function tick(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    counter.textContent = Math.floor(easeOutExpo(progress) * target).toLocaleString();
+                    if (progress < 1) requestAnimationFrame(tick);
+                }
+                requestAnimationFrame(tick);
+            }
+
+            const counterObserver = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    runCount();
+                    counterObserver.disconnect();
+                }
+            }, { threshold: 0.4 });
+            counterObserver.observe(counter);
+        }
+    </script>
+</body>
+</html>
