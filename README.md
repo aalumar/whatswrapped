@@ -1,6 +1,6 @@
 # WhatsWrapped
 
-A self-hosted WhatsApp year-in-review generator. Export your chats, run the pipeline, and get a beautiful recap with charts, emoji stats, word clouds, and more.
+A self-hosted WhatsApp year-in-review generator. Export your chats, run the pipeline, and get a recap with charts, stats, and more.
 
 ## Setup
 
@@ -8,19 +8,19 @@ A self-hosted WhatsApp year-in-review generator. Export your chats, run the pipe
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+source .venv/bin/activate 
 pip install -r requirements.txt
 ```
 
 ### 2. Export your WhatsApp chats
 
-On your phone: **Settings → Chats → Export Chat → Without Media** (or With Media for sticker support).
+On your phone: **Chat settings → Export chat → With media** (or Without media for no sticker support).
 
 Unzip each export into its own folder under `chats/`:
 
 ```
 chats/
-  My Friends/
+  Friends/
     _chat.txt
   Family/
     _chat.txt
@@ -52,9 +52,9 @@ analyzer.py         # Emoji, word, sender frequency
 stats_engine.py     # Streaks, fun facts, media %
 media_matcher.py    # Sticker thumbnails
 visualizer.py       # Plotly charts + word cloud
-chats/              # Your chat exports (gitignored)
-cache/              # Processed stats JSON (gitignored)
-static/images/      # Generated charts (gitignored)
+chats/              # Your chat exports 
+cache/              # Processed stats JSON 
+static/images/      # Generated charts 
 ```
 
 ## Expected chat format
@@ -65,6 +65,11 @@ WhatsApp exports follow this format (the parser handles both 12h and 24h clocks,
 [1/1/25, 9:00:00 AM] Alice: Hello!
 [1/1/25, 9:01:00 AM] Bob: Hey there
 ```
+
+## Notes
+- This was initially developed for my own personal use, so it will certainly not cover all edge cases.
+- The ```recap.html``` contains hardcoded Arabic titles for each segment. Adjust as needed.
+- The parser is designed for English and Arabic, and may require adjustments for other languages.
 
 ## License
 

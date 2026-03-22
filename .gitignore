@@ -8,7 +8,6 @@ cache/
 static/images/
 
 # Personal data and config
-chats/
 config.json
 
 # IDE and OS
